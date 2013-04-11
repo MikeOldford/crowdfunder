@@ -1,39 +1,42 @@
 require 'test_helper'
 
-class ProjectFlowsTest < ActionDispatch::IntegrationTest
-  # test "the truth" do
-  #   assert true
-  # end
-
-  test "the index page lists all our projects" do 
-    # Create a bunch of projects (3) in the DB (using FG)
-    p1 = FactoryGirl.create(:project)
-    p2 = FactoryGirl.create(:project, title: "Waterproof Whiteboard")
-    p3 = FactoryGirl.create(:project, title: "Something else??")
-
-    visit '/projects'
-    assert page.has_content?('Listing Projects')
-
-    assert page.has_content?("Wifi-enabled Shoes")
-    assert page.has_content?("Waterproof Whiteboard")
-    assert page.has_content?("Something else??")
-
-    # Go to the project details (show) page
-    click_link 'Waterproof Whiteboard'
-    assert_equal project_path(p2), current_path
-    assert find('h1:first').has_content? p2.title
+class PledgeFlowsTest < ActionDispatch::IntegrationTest
+  
+  setup do
+    @project = FactoryGirl.create :project    
   end
 
-  test "navigation" do
-    visit "/"
-    assert_equal root_path, current_path
-    # The home nav element should be active
-    assert_equal "Home", find("ul.nav li.active a").text
+  test "requires authenticated user" do 
+    visit project_path(@project)
 
-    visit "/projects"
-    assert_equal projects_path, current_path
-    # The projects nav element should be active
-    assert_equal "Projects", find("ul.nav li.active a").text
+    click_link 'Back This Project'
+
+    assert_equal new_session_path, current_path
+    assert page.has_content?("Please login first.")
+  end
+
+  test "authenticated user can pledge valid amount" do 
+    user = setup_signed_in_user
+
+    visit project_path(@project)
+    click_link 'Back This Project'  
+
+    # Should be at pledge submission page, with 0 pledges in the databases currently
+    assert_equal new_project_pledge_path(@project), current_path
+    assert_equal 0, Pledge.count
+
+    fill_in 'pledge[amount]', with: 100
+    click_button 'Pledge Now'
+
+    # Should be Redirected back to project page with thank you message
+    assert_equal project_path(@project), current_path
+    assert page.has_content?("Thanks for pledging")
+
+    # Verify that the pledge was created with the right attributes
+    assert pledge = Pledge.order(:id).last
+    assert_equal user, pledge.user
+    assert_equal @project, pledge.project
+    assert_equal 100, pledge.amount
   end
 
 end

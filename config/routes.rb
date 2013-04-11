@@ -6,7 +6,9 @@ CrowdfunderInClass::Application.routes.draw do
   resources :projects
   resources :users, :except => [:index, :destroy]
   resource :session, :only => [:new, :create, :destroy]
-
+  resources :projects do 
+    resources :pledges, only: [:new, :create]
+  end
   root :to => "welcome#index"
 
   # You can have the root of your site routed with "root"
