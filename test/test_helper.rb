@@ -24,7 +24,7 @@ class ActionDispatch::IntegrationTest
   # Make the Capybara DSL available in all integration tests
   include Capybara::DSL
 
-  Capybara.app = Crowdfunder::Application
+  Capybara.app = CrowdfunderInClass::Application
   Capybara.javascript_driver = :webkit
 
   self.use_transactional_fixtures = false 
@@ -36,7 +36,7 @@ class ActionDispatch::IntegrationTest
   end
 
   # This helper method can be called at the beginning of any test that required a logged in user.
-  def setup_signed_in_user
+  def get_signed_in_user
     pass = "this-is-a-password"
     user = FactoryGirl.create :user, password: pass
     visit '/session/new'
