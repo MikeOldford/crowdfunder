@@ -2,13 +2,20 @@ CrowdfunderInClass::Application.routes.draw do
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
-
-  resources :projects
-  resources :users, :except => [:index, :destroy]
-  resource :session, :only => [:new, :create, :destroy]
-  resources :projects do 
+  
+  resources :projects, only: [:index, :show]  do
     resources :pledges, only: [:new, :create]
   end
+
+  namespace :my do
+    #my/projects_controller.rb
+    resources :projects #my/projects/5 (show) my/projects/2/edit
+  end
+
+  resources :users, :except => [:index, :destroy]
+  resource :session, :only => [:new, :create, :destroy]
+
+
   root :to => "welcome#index"
 
   # You can have the root of your site routed with "root"

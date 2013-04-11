@@ -6,7 +6,10 @@
       <li class="<%= 'active' if controller_name == 'projects' %>">
         <%= link_to "Projects", projects_url %>
       </li>
-    </ul>
+      <li class="<='active' if controller_name == 'projects' %>">
+        <%= link_to "My Projects", my_projects_path %>
+      </li>
+    </ul>`
 
       <div class="pull-right">
         <% if logged_in? %>
