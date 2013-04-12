@@ -9,4 +9,16 @@ class Pledge < ActiveRecord::Base
   validates :project, :presence => true
 
   validates :amount,  :numericality => {:only_integer => true, :greater_than => 0}, :presence => true
+
+  def send_new_pledge_email
+  	UserMailer.new_pledge(self).deliver
+  	
+  end
+
+
+
+
+
+
+
 end

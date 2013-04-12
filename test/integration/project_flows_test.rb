@@ -12,10 +12,10 @@ class PledgeFlowsTest < ActionDispatch::IntegrationTest
     click_link "Back This Project"
 
     assert_equal new_session_path, current_path
-    assert page.has_content?("Please login first.")
+    assert page.has_content?("Sign In")
   end
 
-  test "authenticated user can pledge valid amount" do 
+  test "authenticated users can pledge valid amount" do 
     user = get_signed_in_user
 
     visit project_path(@project)
